@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => {
-  res.json({ message: 'Hello from GitHub Actions Demo!' });
+  res.json({ message: 'Hello from GitHub Actions Demo in Dev branch!' });
 });
 
 // Only start the server if this file is run directly
