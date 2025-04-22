@@ -1,0 +1,12 @@
+[build]
+  command = "npm install && npm run build"
+  publish = "public"
+  functions = "functions"
+
+[functions]
+  directory = "functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
