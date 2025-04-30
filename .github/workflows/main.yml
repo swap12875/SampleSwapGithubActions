@@ -38,6 +38,8 @@ jobs:
         run: npm ci
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
+      - name: Create required directories
+        run: mkdir -p public functions-build
       - name: Build application
         run: npm run build
       - name: Start server and run tests
