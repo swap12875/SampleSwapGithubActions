@@ -21,14 +21,30 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
 
 // Data file path
-const USERS_FILE = path.join(__dirname, '../data/users.json');
+const DATA_DIR = path.join(__dirname, '../data');
+const USERS_FILE = path.join(DATA_DIR, 'users.json');
 
 // Helper functions
+async function ensureDataDir() {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    try {
+      await fs.access(USERS_FILE);
+    } catch {
+      await fs.writeFile(USERS_FILE, '[]');
+    }
+  } catch (error) {
+    console.error('Error creating data directory:', error);
+  }
+}
+
 async function readUsers() {
+  await ensureDataDir();
   try {
     const data = await fs.readFile(USERS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
+    console.error('Error reading users file:', error);
     return [];
   }
 }

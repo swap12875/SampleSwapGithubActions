@@ -25,6 +25,7 @@
   "devDependencies": {
     "jest": "^27.0.6",
     "supertest": "^6.1.3",
-    "@playwright/test": "^1.35.0"
+    "@playwright/test": "^1.35.0",
+    "wait-on": "^7.2.0"
   }
 }

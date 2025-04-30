@@ -39,16 +39,31 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
       - name: Create required directories
-        run: mkdir -p public lambda
+        run: |
+          mkdir -p public lambda data
+          echo '[]' > data/users.json
       - name: Build application
         run: npm run build
         env:
           NODE_ENV: production
-      - name: Start server and run tests
+      - name: Start server
+        run: npm start > server.log 2>&1 &
+      - name: Wait for server
         run: |
-          npm start &
-          sleep 15
-          npm run test:ui
+          echo "Waiting for server to start..."
+          npx wait-on -t 30000 -v tcp:9000
+          echo "Server is ready"
+      - name: Run UI tests
+        run: npm run test:ui
+        env:
+          DEBUG: pw:api,pw:browser*
+          PWDEBUG: console
+      - name: Upload server logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-logs
+          path: server.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
