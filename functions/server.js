@@ -25,9 +25,26 @@ app.use((req, res, next) => {
 
 // Set view engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../views'));
-console.log('Views directory:', path.join(__dirname, '../views'));
+const viewsPath = path.join(__dirname, 'views');
+app.set('views', viewsPath);
+
+// Debug information
+console.log('Server Debug Info:');
 console.log('Current directory:', __dirname);
+console.log('Views directory:', viewsPath);
+console.log('Views directory exists:', require('fs').existsSync(viewsPath));
+console.log('Directory contents:', require('fs').readdirSync(__dirname));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(500).send('Server Error: ' + err.message);
+});
+
+// Add error handler for unhandled promises
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
 // Data file path
 const DATA_DIR = path.join(__dirname, '../data');

@@ -44,16 +44,80 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Create required directories and files
         run: |
-          mkdir -p public lambda data views
+          # Create base directories
+          mkdir -p public lambda/views data
+          
+          # Initialize data file
           echo '[]' > data/users.json
+          
+          # Create views in the correct location
+          mkdir -p lambda/views
+          
+          # Create signup view
+          cat > lambda/views/signup.ejs << 'EOL'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Sign Up</title>
+          </head>
+          <body>
+              <h1>Sign Up</h1>
+              <% if (error) { %>
+                  <div style="color: red;"><%= error %></div>
+              <% } %>
+              <form action="/signup" method="POST">
+                  <div>
+                      <label>Username:</label>
+                      <input type="text" name="username" required>
+                  </div>
+                  <div>
+                      <label>Email:</label>
+                      <input type="email" name="email" required>
+                  </div>
+                  <div>
+                      <label>Password:</label>
+                      <input type="password" name="password" required>
+                  </div>
+                  <button type="submit">Sign Up</button>
+              </form>
+          </body>
+          </html>
+          EOL
+          
+          # Create login view
+          cat > lambda/views/login.ejs << 'EOL'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Login</title>
+          </head>
+          <body>
+              <h1>Login</h1>
+              <% if (error) { %>
+                  <div style="color: red;"><%= error %></div>
+              <% } %>
+              <form action="/login" method="POST">
+                  <div>
+                      <label>Username:</label>
+                      <input type="text" name="username" required>
+                  </div>
+                  <div>
+                      <label>Password:</label>
+                      <input type="password" name="password" required>
+                  </div>
+                  <button type="submit">Login</button>
+              </form>
+          </body>
+          </html>
+          EOL
+          
           # Verify directory structure
           echo "Directory structure:"
           tree .
-          # Verify views directory
-          echo "Views directory content:"
-          ls -la views/
-          # Copy views to the correct location
-          cp -r views/* functions/views/ || true
+          
+          # Verify views content
+          echo "\nViews content:"
+          ls -la lambda/views/
       - name: Build application
         run: npm run build
         env:
