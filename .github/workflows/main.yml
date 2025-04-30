@@ -39,24 +39,38 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb
+          sudo apt-get install -y xvfb tree
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
-      - name: Create required directories
+      - name: Create required directories and files
         run: |
-          mkdir -p public lambda data
+          mkdir -p public lambda data views
           echo '[]' > data/users.json
+          # Verify directory structure
+          echo "Directory structure:"
+          tree .
+          # Verify views directory
+          echo "Views directory content:"
+          ls -la views/
+          # Copy views to the correct location
+          cp -r views/* functions/views/ || true
       - name: Build application
         run: npm run build
         env:
           NODE_ENV: production
-      - name: Start server
-        run: npm start > server.log 2>&1 &
-      - name: Wait for server
+      - name: Start server and verify
         run: |
+          npm start > server.log 2>&1 &
           echo "Waiting for server to start..."
-          npx wait-on -t 30000 -v tcp:9000
+          npx wait-on -t 30000 -v http://localhost:9000/signup
           echo "Server is ready"
+          curl -v http://localhost:9000/signup || true
+          echo "Current directory contents:"
+          ls -la
+          echo "Views directory contents:"
+          ls -la views/
+          echo "Server logs:"
+          cat server.log
       - name: Run UI tests
         run: xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" npm run test:ui
         env:

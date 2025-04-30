@@ -9,6 +9,7 @@ const path = require('path');
 const app = express();
 
 // Middleware
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
   secret: 'your-secret-key',
@@ -16,9 +17,17 @@ app.use(session({
   saveUninitialized: false
 }));
 
+// Debug middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Set view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../views'));
+console.log('Views directory:', path.join(__dirname, '../views'));
+console.log('Current directory:', __dirname);
 
 // Data file path
 const DATA_DIR = path.join(__dirname, '../data');
