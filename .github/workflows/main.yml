@@ -15,8 +15,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-      - run: npm ci
-      - run: npm test
+      - name: Install dependencies
+        run: npm ci
+      - name: Run unit tests
+        run: npm run test:unit
 
   ui-tests:
     needs: build-and-test
@@ -31,10 +33,11 @@ jobs:
         run: npm ci
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-      - name: Start server
-        run: npm start & npx wait-on http://localhost:3000
-      - name: Run Playwright tests
-        run: npm run test:ui
+      - name: Start server and run tests
+        run: |
+          npm start &
+          sleep 10
+          npm run test:ui
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
@@ -44,7 +47,7 @@ jobs:
           retention-days: 30
 
   deploy:
-    needs: build-and-test
+    needs: [build-and-test, ui-tests]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
