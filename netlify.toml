@@ -1,11 +1,7 @@
 [build]
   command = "npm install && npm run build"
   publish = "public"
-  functions = "functions-build"
-
-[functions]
-  directory = "functions-build"
-  node_bundler = "esbuild"
+  functions = "lambda"
 
 [[redirects]]
   from = "/*"
