@@ -4,23 +4,43 @@ const fs = require('fs').promises;
 const path = require('path');
 let server;
 
+// Create data directory if it doesn't exist
+const dataDir = path.join(__dirname, '..', 'data');
+const usersFile = path.join(dataDir, 'users.json');
+
 describe('Authentication Tests', () => {
   beforeAll(async () => {
+    // Ensure data directory exists
+    await fs.mkdir(dataDir, { recursive: true });
+    // Create empty users file
+    await fs.writeFile(usersFile, '[]');
     server = app.listen(3000);
-    // Ensure empty users file
-    await fs.writeFile(path.join(__dirname, 'data', 'users.json'), '[]');
   });
 
   afterAll(async () => {
-    await fs.writeFile(path.join(__dirname, 'data', 'users.json'), '[]');
-    await new Promise(resolve => server.close(resolve));
+    // Clean up
+    try {
+      await fs.writeFile(usersFile, '[]');
+    } catch (err) {
+      console.error('Error cleaning up:', err);
+    }
+    await new Promise((resolve) => {
+      server.close(() => {
+        resolve();
+      });
+    });
+  });
+
+  beforeEach(async () => {
+    // Reset users file before each test
+    await fs.writeFile(usersFile, '[]');
   });
 
   test('GET / should redirect to login', async () => {
     const response = await request(app).get('/');
     expect(response.status).toBe(302);
     expect(response.header.location).toBe('/login');
-  }, 10000);
+  });
 
   test('Should create new user and login', async () => {
     // Sign up
@@ -40,5 +60,14 @@ describe('Authentication Tests', () => {
 
     expect(loginResponse.status).toBe(302);
     expect(loginResponse.header.location).toBe('/dashboard');
-  }, 10000);
+  });
+});
+
+// Handle process termination
+process.on('SIGTERM', () => {
+  server?.close();
+});
+
+process.on('SIGINT', () => {
+  server?.close();
 });
