@@ -4,7 +4,7 @@
   "description": "",
   "main": "functions/server.js",
   "scripts": {
-    "test:unit": "jest jest-tests",
+    "test:unit": "jest --config jest.config.js",
     "test:ui": "playwright test",
     "test": "npm run test:unit",
     "build": "netlify-lambda build functions",
