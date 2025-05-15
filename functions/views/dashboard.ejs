@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .dashboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        h1 {
+            margin: 0;
+            color: #333;
+        }
+        .welcome-message {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .content {
+            margin-top: 2rem;
+        }
+        .card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .card h2 {
+            margin-top: 0;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <div>
+                <h1>Dashboard</h1>
+                <p class="welcome-message">Welcome, <%= username %>!</p>
+            </div>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+        <div class="content">
+            <div class="card">
+                <h2>Getting Started</h2>
+                <p>This is your personal dashboard. You can start managing your tasks and settings from here.</p>
+            </div>
+            <div class="card">
+                <h2>Quick Actions</h2>
+                <p>Common actions and frequently used features will appear here.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
