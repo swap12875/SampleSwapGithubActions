@@ -1,5 +1,4 @@
 const express = require('express');
-const serverless = require('serverless-http');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
@@ -9,6 +8,7 @@ const path = require('path');
 const app = express();
 
 // Middleware
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
   secret: 'your-secret-key',
@@ -18,7 +18,7 @@ app.use(session({
 
 // Set view engine
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../views'));
+app.set('views', path.join(__dirname, 'views'));
 
 // Data file path
 const USERS_FILE = path.join(__dirname, '../data/users.json');
@@ -94,5 +94,10 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-// Export the serverless handler
-module.exports.handler = serverless(app);
+// Start server
+const PORT = process.env.PORT || 80;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+module.exports = app;
